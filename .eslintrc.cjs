@@ -20,7 +20,7 @@ module.exports = {
     "plugin:react/jsx-runtime",
     "prettier",
   ],
-  ignorePatterns: [".eslintrc.cjs", "vite.config.ts"],
+  ignorePatterns: [".eslintrc.cjs", "vite.config.ts", "dist"],
   rules: {
     "unicorn/filename-case": "off",
     "unicorn/prevent-abbreviations": "off",

@@ -1,9 +1,15 @@
-import { MantineProvider } from "@mantine/core"
+import { Center, MantineProvider, Stack } from "@mantine/core"
+import BookGroup from "./components/BookGroup.js"
 
 const App = () => {
   return (
     <MantineProvider theme={{ colorScheme: "dark" }} withGlobalStyles withNormalizeCSS>
-      <h1>:)</h1>
+      <Center>
+        <Stack justify="flex-start">
+          <BookGroup />
+          <BookGroup />
+        </Stack>
+      </Center>
     </MantineProvider>
   )
 }
