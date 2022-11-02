@@ -1,10 +1,11 @@
 import { Grid, Image } from "@mantine/core"
 import { useState } from "react"
+import { TBookData } from "../books/views.js"
 import OwnedMultiSelect from "./OwnedMultiSelect.js"
 import ReadChip from "./ReadChip.js"
 
 interface BookProps {
-  book: string
+  book: TBookData
 }
 
 const Book = ({ book }: BookProps) => {
@@ -28,10 +29,10 @@ const Book = ({ book }: BookProps) => {
           styles={{ image: { filter: `grayscale(${isRead ? 0 : 1})` } }}
           width={50}
           fit="contain"
-          src={`/${book}.jpg`}
+          src={book.coverUrl}
         />
       </Grid.Col>
-      <Grid.Col span={2}>{book}</Grid.Col>
+      <Grid.Col span={2}>{book.name}</Grid.Col>
       <Grid.Col span={1}>
         <ReadChip isRead={isRead} setIsRead={setIsRead} />
       </Grid.Col>
