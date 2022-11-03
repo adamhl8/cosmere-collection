@@ -1,12 +1,11 @@
 import { z } from "zod"
-import mistborn from "./mistborn.js"
-import standalones from "./standalones.js"
-import stormlight from "./stormlight.js"
-import whitesand from "./whitesand.js"
+import books from "./books.js"
 
 const BookData = z.object({
   name: z.string().min(1),
   coverUrl: z.string().min(1),
+  isRead: z.boolean(),
+  formats: z.string().array(),
 })
 export type TBookData = z.infer<typeof BookData>
 
@@ -18,10 +17,10 @@ export type TBookGroupData = z.infer<typeof BookGroupData>
 
 const BooksView = BookGroupData.array()
 
-const { tfe, woa, hoa, aol, sos, bom, sh, tlm } = mistborn
-const { wok, wor, ed, ob, ds, row } = stormlight
-const { elantris, tes, wb, sfs, sotd, au } = standalones
-const { ws1, ws2, ws3 } = whitesand
+const { tfe, woa, hoa, aol, sos, bom, sh, tlm } = books
+const { wok, wor, ed, ob, ds, row } = books
+const { elantris, tes, wb, sfs, sotd, au } = books
+const { ws1, ws2, ws3 } = books
 
 const bySeries = BooksView.parse([
   {
