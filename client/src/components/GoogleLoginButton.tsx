@@ -1,6 +1,6 @@
-import { GoogleOutlined } from "@ant-design/icons"
 import { Button } from "@mantine/core"
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
+import { IconBrandGoogle } from "@tabler/icons"
 import { deepmerge } from "deepmerge-ts"
 import { apiObj } from "../App.js"
 import books from "../books/books.js"
@@ -39,7 +39,7 @@ const GoogleLoginButton = ({ isLoggedIn, setIsLoggedIn, setView }: GoogleLoginBu
   return isLoggedIn ? (
     <></>
   ) : (
-    <Button leftIcon={<GoogleOutlined />} variant="light" radius="md" mt="xl" onClick={() => login()}>
+    <Button leftIcon={<IconBrandGoogle size={20} />} variant="light" radius="md" mt="xl" onClick={() => login()}>
       Login with Google
     </Button>
   )

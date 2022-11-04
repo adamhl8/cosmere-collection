@@ -1,4 +1,4 @@
-import { Grid, Image } from "@mantine/core"
+import { Grid, Image, Text } from "@mantine/core"
 import { useEffect, useState } from "react"
 import { apiObj } from "../App.js"
 import { TBookData, TBooksView } from "../books/views.js"
@@ -55,7 +55,9 @@ const Book = ({ book, view }: BookProps) => {
           src={book.coverUrl}
         />
       </Grid.Col>
-      <Grid.Col span={2}>{book.name}</Grid.Col>
+      <Grid.Col span={2}>
+        <Text weight="bold">{book.name}</Text>
+      </Grid.Col>
       <Grid.Col span={1}>
         <ReadChip isRead={isRead} handleSetIsRead={handleSetIsRead} />
       </Grid.Col>
