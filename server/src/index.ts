@@ -3,29 +3,51 @@ import Fastify from "fastify"
 import { z } from "zod"
 import storage, { storageGet } from "./storage.js"
 
-const UserInfo = z.object({
-  sub: z.string().min(1),
-  email: z.string().min(1),
-})
-type TUserInfo = z.infer<typeof UserInfo>
-
 const server = Fastify({})
 await server.register(cors, { exposedHeaders: "userid" })
 
-server.post("/api/login", async (request, reply) => {
-  if (!request.headers.authorization) return await reply.code(400)
-  const response = await fetch(`https://www.googleapis.com/oauth2/v3/userinfo?access_token=${request.headers.authorization}`)
+const LoginData = z.object({
+  email: z.string().min(1),
+  password: z.string().min(1),
+})
+type TLoginData = z.infer<typeof LoginData>
 
-  let userInfo: TUserInfo
+server.post("/api/register", async (request, reply) => {
+  let registerData: TLoginData
+
   try {
-    userInfo = UserInfo.parse(await response.json())
+    registerData = LoginData.parse(request.body)
   } catch {
-    return await reply.code(401)
+    return reply.code(400).send()
   }
 
-  const userData = await storageGet(`/${userInfo.sub}`)
-  if (!userData) return await reply.header("userid", userInfo.sub).send({})
-  return await reply.header("userid", userInfo.sub).send(userData)
+  const { email, password } = registerData
+
+  const user = await storageGet<string>(`/${email}`)
+  if (user) return reply.code(409).send()
+
+  await storage.push(`/${email}/password`, password)
+  await storage.push(`/${email}/data`, {})
+})
+
+server.post("/api/login", async (request, reply) => {
+  let loginData: TLoginData
+
+  try {
+    loginData = LoginData.parse(request.body)
+  } catch {
+    return reply.code(400).send()
+  }
+
+  const { email, password } = loginData
+
+  const userEmail = await storageGet<string>(`/${email}`)
+  if (!userEmail) return reply.code(404).send()
+
+  const userPassword = await storageGet<string>(`/${email}/password`)
+  if (password !== userPassword) return reply.code(401).send()
+
+  return await storageGet(`/${email}/data`)
 })
 
 const BookUpdate = z.record(
@@ -39,29 +61,25 @@ const BookUpdate = z.record(
 )
 
 server.patch("/api/updateIsRead", async (request, reply) => {
-  if (!request.headers.userid || typeof request.headers.userid !== "string") return await reply.code(400)
+  const userEmail = request.headers.useremail
+  if (!userEmail || typeof userEmail !== "string") return reply.code(400).send()
 
-  const userId = request.headers.userid
   const bookUpdate = BookUpdate.parse(request.body)
   const shortName = Object.keys(bookUpdate)[0]
-  if (!shortName) return await reply.code(400)
+  if (!shortName) return reply.code(400).send()
 
-  await storage.push(`/${userId}/${shortName}/isRead`, bookUpdate[shortName]?.isRead)
-
-  return await reply.code(200)
+  await storage.push(`/${userEmail}/data/${shortName}/isRead`, bookUpdate[shortName]?.isRead)
 })
 
 server.patch("/api/updateOwnedFormats", async (request, reply) => {
-  if (!request.headers.userid || typeof request.headers.userid !== "string") return await reply.code(400)
+  const userEmail = request.headers.useremail
+  if (!userEmail || typeof userEmail !== "string") return reply.code(400).send()
 
-  const userId = request.headers.userid
   const bookUpdate = BookUpdate.parse(request.body)
   const shortName = Object.keys(bookUpdate)[0]
-  if (!shortName) return await reply.code(400)
+  if (!shortName) return reply.code(400).send()
 
-  await storage.push(`/${userId}/${shortName}/ownedFormats`, bookUpdate[shortName]?.ownedFormats)
-
-  return await reply.code(200)
+  await storage.push(`/${userEmail}/data/${shortName}/ownedFormats`, bookUpdate[shortName]?.ownedFormats)
 })
 
 const start = async () => {
