@@ -35,6 +35,8 @@ const RegistrationForm = ({ setIsLoggedIn }: RegistrationFormProps) => {
       if (error instanceof HTTPError) {
         if (error.response.status === 409) form.setFieldError("email", "User already exists")
       } else throw error
+
+      return
     }
 
     setIsLoggedIn(true)

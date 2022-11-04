@@ -23,8 +23,8 @@ server.post("/api/register", async (request, reply) => {
 
   const { email, password } = registerData
 
-  const user = await storageGet<string>(`/${email}`)
-  if (user) return reply.code(409).send()
+  const userEmail = await storageGet<string>(`/${email}`)
+  if (userEmail) return reply.code(409).send()
 
   await storage.push(`/${email}/password`, password)
   await storage.push(`/${email}/data`, {})

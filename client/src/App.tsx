@@ -5,7 +5,7 @@ import { bySeries } from "./books/views.js"
 import BookGroup from "./components/BookGroup.js"
 import LoginButtonGroup from "./components/login/LoginButtonGroup.js"
 
-export const apiObj = { api: ky.create({ prefixUrl: "https://cosmerecollection.com/api" }) }
+export const apiObj = { api: ky.create({ prefixUrl: "http://localhost:3000/api" }) }
 
 const App = () => {
   const [isLoggedIn, setIsLoggedIn] = useState(false)

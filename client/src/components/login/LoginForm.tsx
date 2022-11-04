@@ -37,9 +37,9 @@ const LoginForm = ({ setIsLoggedIn, setView }: LoginFormProps) => {
         if (status === 404) form.setFieldError("email", "User does not exist")
         if (status === 401) form.setFieldError("password", "Incorrect password")
       } else throw error
-    }
 
-    if (!response) return
+      return
+    }
 
     setIsLoggedIn(true)
     apiObj.api = api.extend({ headers: { useremail: values.email } })
