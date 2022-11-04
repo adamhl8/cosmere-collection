@@ -6,7 +6,7 @@
   "scripts": {
     "build": "pnpm lint && vite build",
     "dev": "vite",
-    "format": "prettier --write .",
+    "format": "prettier --write . !dist",
     "lint": "tsc && eslint -f pretty .",
     "preview": "vite preview"
   },
