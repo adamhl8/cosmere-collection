@@ -1,16 +1,19 @@
 import { Grid, Image } from "@mantine/core"
-import { useState } from "react"
-import { TBookData } from "../books/views.js"
+import { useEffect, useState } from "react"
+import { apiObj } from "../App.js"
+import { TBookData, TBooksView } from "../books/views.js"
 import OwnedMultiSelect from "./OwnedMultiSelect.js"
 import ReadChip from "./ReadChip.js"
 
 interface BookProps {
   book: TBookData
+  view: TBooksView
 }
 
-const Book = ({ book }: BookProps) => {
-  const [isRead, setIsRead] = useState(false)
-  const [ownedFormats, setOwnedFormats] = useState<string[]>([])
+const Book = ({ book, view }: BookProps) => {
+  const { api } = apiObj
+  const [isRead, setIsRead] = useState(book.isRead)
+  const [ownedFormats, setOwnedFormats] = useState<string[]>(book.ownedFormats)
   const bookCoverBorderColor = ownedFormats.includes("lb")
     ? "#ff8000"
     : ownedFormats.includes("hc")
@@ -20,6 +23,26 @@ const Book = ({ book }: BookProps) => {
     : ownedFormats.includes("eb")
     ? "#1eff00"
     : false
+
+  const handleSetIsRead = async () => {
+    const status = !isRead
+    setIsRead(status)
+
+    const { shortName } = book
+    await api.patch("updateIsRead", { json: { [shortName]: { isRead: status } } })
+  }
+
+  const handleSetOwnedFormats = async (ownedFormats: string[]) => {
+    setOwnedFormats(ownedFormats)
+
+    const { shortName } = book
+    await api.patch("updateOwnedFormats", { json: { [shortName]: { ownedFormats } } })
+  }
+
+  useEffect(() => {
+    setIsRead(book.isRead)
+    setOwnedFormats(book.ownedFormats)
+  }, [view])
 
   return (
     <Grid grow justify="center" align="center">
@@ -34,10 +57,10 @@ const Book = ({ book }: BookProps) => {
       </Grid.Col>
       <Grid.Col span={2}>{book.name}</Grid.Col>
       <Grid.Col span={1}>
-        <ReadChip isRead={isRead} setIsRead={setIsRead} />
+        <ReadChip isRead={isRead} handleSetIsRead={handleSetIsRead} />
       </Grid.Col>
       <Grid.Col span={4}>
-        <OwnedMultiSelect ownedFormats={ownedFormats} setOwnedFormats={setOwnedFormats} />
+        <OwnedMultiSelect ownedFormats={ownedFormats} handleSetOwnedFormats={handleSetOwnedFormats} />
       </Grid.Col>
     </Grid>
   )

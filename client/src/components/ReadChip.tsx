@@ -2,12 +2,12 @@ import { Chip } from "@mantine/core"
 
 interface ReadChipProps {
   isRead: boolean
-  setIsRead: React.Dispatch<React.SetStateAction<boolean>>
+  handleSetIsRead: () => Promise<void>
 }
 
-const ReadChip = ({ isRead, setIsRead }: ReadChipProps) => {
+const ReadChip = ({ isRead, handleSetIsRead }: ReadChipProps) => {
   return (
-    <Chip variant="filled" checked={isRead} onChange={() => setIsRead((v) => !v)}>
+    <Chip variant="filled" checked={isRead} onChange={() => void handleSetIsRead()}>
       Read
     </Chip>
   )

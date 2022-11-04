@@ -1,9 +1,5 @@
 import { z } from "zod"
-import { TBookData } from "./views.js"
-
-interface Books {
-  [key: string]: TBookData
-}
+import { TBooksData } from "./views.js"
 
 const ImageModule = z.object({
   default: z.string().min(1),
@@ -39,7 +35,7 @@ const bookNames: Record<string, string> = {
   ws3: "White Sand Vol. 3",
 }
 
-const books: Books = {}
+const defaultBooksData: TBooksData = {}
 
 const imageModules = import.meta.glob("/book_covers/**/*")
 for (const [path, imageModule] of Object.entries(imageModules)) {
@@ -49,12 +45,13 @@ for (const [path, imageModule] of Object.entries(imageModules)) {
   const name = bookNames[key] ?? ""
   const { default: coverUrl } = ImageModule.parse(await imageModule())
 
-  books[key] = {
+  defaultBooksData[key] = {
+    shortName: key,
     name,
     coverUrl,
     isRead: false,
-    formats: [],
+    ownedFormats: [],
   }
 }
 
-export default books
+export default defaultBooksData

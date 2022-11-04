@@ -1,21 +1,22 @@
 import { Card, Divider, Title } from "@mantine/core"
 import { Fragment } from "react"
-import { TBookGroupData } from "../books/views.js"
+import { TBookGroupData, TBooksView } from "../books/views.js"
 import Book from "./Book.js"
 
 interface BookGroupProps {
   group: TBookGroupData
+  view: TBooksView
 }
 
-const BookGroup = ({ group }: BookGroupProps) => {
+const BookGroup = ({ group, view }: BookGroupProps) => {
   const books = group.books.map((book, i, { length }) => {
     return i + 1 !== length ? (
       <Fragment key={book.name}>
-        <Book book={book} />
+        <Book book={book} view={view} />
         <Divider mt="md" mb="md" />
       </Fragment>
     ) : (
-      <Book key={book.name} book={book} />
+      <Book key={book.name} book={book} view={view} />
     )
   })
 

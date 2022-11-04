@@ -1,23 +1,34 @@
 import { GoogleOutlined } from "@ant-design/icons"
 import { Button } from "@mantine/core"
 import { TokenResponse, useGoogleLogin } from "@react-oauth/google"
-import ky from "ky"
-import { URL } from "../App.js"
+import { deepmerge } from "deepmerge-ts"
+import { apiObj } from "../App.js"
+import books from "../books/books.js"
+import { BooksData, generateView, TBooksView } from "../books/views.js"
 
 interface GoogleLoginButtonProps {
   isLoggedIn: boolean
   setIsLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
+  setView: React.Dispatch<React.SetStateAction<TBooksView>>
 }
 
-const GoogleLoginButton = ({ isLoggedIn, setIsLoggedIn }: GoogleLoginButtonProps) => {
+const GoogleLoginButton = ({ isLoggedIn, setIsLoggedIn, setView }: GoogleLoginButtonProps) => {
+  const { api } = apiObj
+
   const handleLogin = async (tokenResponse: Omit<TokenResponse, "error" | "error_description" | "error_uri">) => {
-    const response = await ky
-      .post(`${URL}/api/login`, {
-        headers: { Authorization: tokenResponse.access_token },
-      })
-      .json()
-    console.log(response)
+    const response = await api.post("login", { headers: { Authorization: tokenResponse.access_token } })
+    if (!response.ok) return
+
+    const userid = response.headers.get("userid")
+    if (!userid) return
     setIsLoggedIn(true)
+    apiObj.api = api.extend({ headers: { userid } })
+
+    const userData = await response.json()
+    const updatedBooksData = deepmerge(books, userData)
+    const updatedView = generateView(undefined, BooksData.parse(updatedBooksData))
+
+    setView([...updatedView])
   }
 
   const login = useGoogleLogin({

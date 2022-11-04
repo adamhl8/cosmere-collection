@@ -21,10 +21,10 @@ const multiSelectValueStyle = {
 
 interface OwnedMultiSelectProps {
   ownedFormats: string[]
-  setOwnedFormats: React.Dispatch<React.SetStateAction<string[]>>
+  handleSetOwnedFormats: (ownedFormats: string[]) => Promise<void>
 }
 
-const OwnedMultiSelect = ({ ownedFormats, setOwnedFormats }: OwnedMultiSelectProps) => {
+const OwnedMultiSelect = ({ ownedFormats, handleSetOwnedFormats }: OwnedMultiSelectProps) => {
   const [data, setData] = useState([
     { value: "eb", label: "eBook" },
     { value: "pb", label: "Paperback" },
@@ -47,7 +47,7 @@ const OwnedMultiSelect = ({ ownedFormats, setOwnedFormats }: OwnedMultiSelectPro
         return item
       }}
       value={ownedFormats}
-      onChange={setOwnedFormats}
+      onChange={(ownedFormats) => void handleSetOwnedFormats(ownedFormats)}
     />
   )
 }
